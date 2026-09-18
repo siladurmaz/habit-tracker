@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Alışkanlıklarım</title>
+  <style>
+    body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #6a4c93;
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+    h1 {
+      color: white;
+      text-align: center;
+    }
+
+    #streak {
+  color: white;
+  text-align: center;
+  font-size: 18px;
+}
+
+    li {
+      background-color: white;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      list-style: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    li.done {
+      background-color: #c8e6c9;
+      text-decoration: line-through;
+      color: #666;
+    }
+
+    .progress-container {
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  height: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  background-color: #66bb6a;
+  height: 100%;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+  </style>
+</head>
+<body>
+
+  <h1>My Habits</h1>
+  <p id="streak"></p>
+  <div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <ul>
+    <li onclick="toggleDone(this)">Study English</li>
+    <li onclick="toggleDone(this)">Read a book</li>
+    <li onclick="toggleDone(this)">Take a walk</li>
+  </ul>
+
+  <script>
+    function toggleDone(item) {
+      item.classList.toggle('done');
+      saveState();
+      updateStreakDisplay();
+      updateProgressBar();
+    }
+
+    function saveState() {
+      const items = document.querySelectorAll('li');
+      const doneList = [];
+      items.forEach(function(item, index) {
+        if (item.classList.contains('done')) {
+          doneList.push(index);
+        }
+      });
+      localStorage.setItem(getTodayKey(), JSON.stringify(doneList));
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem(getTodayKey());
+      if (!saved) return;
+      const doneList = JSON.parse(saved);
+      const items = document.querySelectorAll('li');
+      doneList.forEach(function(index) {
+        items[index].classList.add('done');
+      });
+    }
+
+    function getTodayKey() {
+      const today = new Date();
+      const dateStr = today.toISOString().split('T')[0];
+      return 'habit-' + dateStr;
+    }
+
+    function calculateStreak() {
+      const totalHabits = document.querySelectorAll('li').length;
+      let streak = 0;
+      let checkDate = new Date();
+
+      while (true) {
+        const dateStr = checkDate.toISOString().split('T')[0];
+        const saved = localStorage.getItem('habit-' + dateStr);
+
+        if (!saved) break;
+
+        const doneList = JSON.parse(saved);
+        if (doneList.length < totalHabits) break;
+
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      }
+
+      return streak;
+    }
+
+    function updateStreakDisplay() {
+      const streak = calculateStreak();
+      document.getElementById('streak').textContent = '🔥 ' + streak + ' day streak';
+    }
+
+    function updateProgressBar() {
+  const items = document.querySelectorAll('li');
+  const total = items.length;
+  let doneCount = 0;
+  items.forEach(function(item) {
+    if (item.classList.contains('done')) doneCount++;
+  });
+  const percent = (doneCount / total) * 100;
+  document.getElementById('progressBar').style.width = percent + '%';
+}
+
+    loadState();
+    updateStreakDisplay();
+    updateProgressBar();
+  </script>
+
+</body>
+</html>
