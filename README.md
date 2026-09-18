@@ -30,9 +30,9 @@ open index.html
 
 ## 📸 Preview
 
-<img width="1280" height="797" alt="image" src="https://github.com/user-attachments/assets/2384dd0e-0d90-4fde-8b4f-78bf756e63f4" />
+<img width="1280" height="858" alt="image" src="https://github.com/user-attachments/assets/7c202275-bad3-4f51-91ef-1c099729cdb8" />
 
-<img width="1280" height="842" alt="image" src="https://github.com/user-attachments/assets/643a62e2-d145-4b80-b372-8a192d628535" />
+<img width="1280" height="891" alt="image" src="https://github.com/user-attachments/assets/514b7009-7af0-4a3d-8c8e-c8503a8ba13d" />
 
 
 ## 📚 Learning notes
