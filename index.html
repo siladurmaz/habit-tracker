@@ -65,6 +65,46 @@ ul {
   margin: 0;
 }
 
+.add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.add-form input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.add-form button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #66bb6a;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-btn {
+  color: #999;
+  font-size: 20px;
+  padding: 0 6px;
+}
+
+.delete-btn:hover {
+  color: #e53935;
+}
+
 
   </style>
 </head>
@@ -74,6 +114,11 @@ ul {
   <p id="streak"></p>
   <div class="progress-container">
   <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="add-form">
+  <input type="text" id="newHabitInput" placeholder="Add a new habit...">
+  <button onclick="addHabit()">Add</button>
   </div>
 
   <ul>
@@ -154,9 +199,79 @@ ul {
   document.getElementById('progressBar').style.width = percent + '%';
 }
 
+function createHabitLi(name) {
+  const li = document.createElement('li');
+
+  const textSpan = document.createElement('span');
+  textSpan.textContent = name;
+  li.appendChild(textSpan);
+
+  const deleteBtn = document.createElement('span');
+  deleteBtn.textContent = '×';
+  deleteBtn.className = 'delete-btn';
+  deleteBtn.onclick = function(event) {
+    event.stopPropagation();
+    li.remove();
+    saveHabitNames();
+    saveState();
+    updateStreakDisplay();
+    updateProgressBar();
+  };
+  li.appendChild(deleteBtn);
+
+  li.onclick = function() {
+    toggleDone(li);
+  };
+
+  return li;
+}
+
+function addHabit() {
+  const input = document.getElementById('newHabitInput');
+  const habitName = input.value.trim();
+
+  if (habitName === '') return;
+
+  const li = createHabitLi(habitName);
+  document.querySelector('ul').appendChild(li);
+
+  input.value = '';
+
+  saveHabitNames();
+  saveState();
+  updateStreakDisplay();
+  updateProgressBar();
+}
+
+function saveHabitNames() {
+  const items = document.querySelectorAll('li');
+  const names = [];
+  items.forEach(function(item) {
+    names.push(item.querySelector('span').textContent);
+  });
+  localStorage.setItem('habitNames', JSON.stringify(names));
+}
+
+function loadHabitNames() {
+  const saved = localStorage.getItem('habitNames');
+  if (!saved) return;
+
+  const names = JSON.parse(saved);
+  const ul = document.querySelector('ul');
+  ul.innerHTML = '';
+
+  names.forEach(function(name) {
+    const li = createHabitLi(name);
+    ul.appendChild(li);
+  });
+}
+
+
+    loadHabitNames();
     loadState();
     updateStreakDisplay();
     updateProgressBar();
+
   </script>
 
 </body>
